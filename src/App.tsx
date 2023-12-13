@@ -1,124 +1,174 @@
-import React, {useMemo} from 'react';
-import type {PropsWithChildren} from 'react';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import React from 'react';
+
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
+  Button,
+  Image,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
-  FlatList,
-  TextInput,
 } from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-import MessageItem from './MassageItem';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
+type RootStackParamList = {
+  Department: undefined;
+  MyProfile: undefined;
+};
 
-const messages = Array.from({length: 30}, (_, index) => ({
-  id: index,
-  text: `Повідомлення ${index}`,
-}));
+type DepartmentScreenNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'Department'
+>;
 
-function App() {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  const messages = useMemo(
-    () =>
-      Array.from({length: 30}, (_, index) => ({
-        id: index,
-        text: `Повідомлення ${index}`,
-      })),
-    [],
-  );
-
+const DepartmentScreen = ({
+  navigation,
+}: {
+  navigation: DepartmentScreenNavigationProp;
+}) => {
   return (
-    <SafeAreaView style={{flex: 1}}>
-      <View style={styles.chatHeader}>
-        <FontAwesome5 name={'chevron-left'} brand style={styles.icon} />
-        <Text style={styles.chatTitle}>Instamobile Team</Text>
-        <FontAwesome5 name={'cog'} brand style={styles.icon} />
-      </View>
-
-      {/* Список повідомлень */}
-      <FlatList
-        data={messages}
-        keyExtractor={item => item.id.toString()}
-        renderItem={({item, index}) => (
-          <MessageItem text={item.text} isUser={index % 2 === 0} />
-        )}
+    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+      <Text style={styles.departmentName}>
+        Кафедра «Програмне забезпечення автоматизованих систем»
+      </Text>
+      <Text style={styles.text}>
+        Навчальний процес ведуть 11 науково-педагогічних працівників: 2
+        професори, 5 кандидатів наук, доцентів, старші викладачі та асистенти.
+      </Text>
+      <Text style={styles.text}>
+        Забезпечує навчальний процес учбово-допоміжний персонал кафедри у складі
+        2 осіб. Кафедра налічує 13 співробітників.
+      </Text>
+      <Button
+        title="Go to MyProfile"
+        onPress={() => navigation.navigate('MyProfile')}
       />
-      {/* Введення нового повідомлення */}
-      <View style={styles.inputContainer}>
-        <FontAwesome5
-          name="camera"
-          brand
-          style={{color: 'blue', fontSize: 24}}
-        />
-
-        <TextInput
-          style={styles.input}
-          placeholder="Напишіть повідомлення..."
-        />
-        <FontAwesome5
-          name="arrow-right"
-          brand
-          style={{color: 'blue', fontSize: 24}}
-        />
-      </View>
-    </SafeAreaView>
+    </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  chatHeader: {
-    backgroundColor: 'blue',
-    flexDirection: 'row',
-    padding: 10,
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  chatTitle: {
-    color: 'white',
-    fontSize: 20,
-  },
-  messageContainer: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-  },
-  messageText: {
-    fontSize: 16,
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderTopWidth: 1,
-    borderTopColor: '#ccc',
-    padding: 10,
-  },
-  icon: {
-    color: 'white',
+  header: {
     fontSize: 24,
+    fontWeight: 'bold',
+    color: '#000',
   },
-  input: {
-    flex: 1,
+  departmentName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000',
+  },
+  text: {
     fontSize: 16,
+    color: '#000',
+    lineHeight: 24,
+    marginLeft:10,
+  },
+  button: {
+    backgroundColor: '#555',
+    padding: 10,
+    borderRadius: 5,
+    color: '#fff',
   },
 });
 
+function MyProfileScreen() {
+  return (
+    <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+      <Image
+        source={require('../assets/photo_2023-07-04_15-48-06.jpg')}
+        style={{
+          width: 200,
+          height: 200,
+          borderRadius: 50,
+        }}
+      />
+      <Text style={stylesMyProfile.title}>Задорожний Олександр Васильович</Text>
+      <Text style={stylesMyProfile.subtitle}>ПЗ-2004</Text>
+    </View>
+  );
+}
+
+const stylesMyProfile = StyleSheet.create({
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  subtitle: {
+    fontSize: 18,
+    color: '#666',
+  },
+});
+
+const Stack = createNativeStackNavigator();
+
+const Drawer = createDrawerNavigator();
+
+function App() {
+  return (
+    <NavigationContainer>
+      {/* <Stack.Navigator initialRouteName="Department">
+        <Stack.Screen name="Department" component={DepartmentScreen} />
+        <Stack.Screen name="MyProfile" component={MyProfileScreen} />
+      </Stack.Navigator> */}
+
+      <Drawer.Navigator initialRouteName="Department">
+        <Drawer.Screen name="Department" component={DepartmentScreen} />
+        <Drawer.Screen name="MyProfile" component={MyProfileScreen} />
+      </Drawer.Navigator>
+    </NavigationContainer>
+  );
+}
 export default App;
+
+
+
+
+// import * as React from 'react';
+// import { Button, View } from 'react-native';
+// import { createDrawerNavigator } from '@react-navigation/drawer';
+// import { NavigationContainer } from '@react-navigation/native';
+
+// // Явно указываем тип для пропса "navigation"
+// type HomeScreenProps = {
+//   navigation: any; // Замените "any" на тип вашей навигации, если у вас есть его определение
+// };
+
+// function HomeScreen({ navigation }: HomeScreenProps) {
+//   return (
+//     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+//       <Button
+//         onPress={() => navigation.navigate('Notifications')}
+//         title="Go to notifications"
+//       />
+//     </View>
+//   );
+// }
+
+// // Явно указываем тип для пропса "navigation"
+// type NotificationsScreenProps = {
+//   navigation: any; // Замените "any" на тип вашей навигации, если у вас есть его определение
+// };
+
+// function NotificationsScreen({ navigation }: NotificationsScreenProps) {
+//   return (
+//     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+//       <Button onPress={() => navigation.goBack()} title="Go back home" />
+//     </View>
+//   );
+// }
+
+// const Drawer = createDrawerNavigator();
+
+// export default function App() {
+//   return (
+//     <NavigationContainer>
+//       <Drawer.Navigator initialRouteName="Home">
+//         <Drawer.Screen name="Home" component={HomeScreen} />
+//         <Drawer.Screen name="Notifications" component={NotificationsScreen} />
+//       </Drawer.Navigator>
+//     </NavigationContainer>
+//   );
+// }
