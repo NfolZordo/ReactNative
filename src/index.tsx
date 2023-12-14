@@ -10,4 +10,5 @@ const Main = () => (
   </Provider>
 );
 
-AppRegistry.registerComponent('lab2t', () => Main); 
+export default Main
+//AppRegistry.registerComponent('lab2t', () => Main); 
