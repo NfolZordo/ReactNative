@@ -126,7 +126,6 @@ const NewsScreen = () => {
           <View>
             <Text>{item.title}</Text>
             <Text>{item.description}</Text>
-            {/* Add more components to display other news details as needed */}
           </View>
         )}
       />
