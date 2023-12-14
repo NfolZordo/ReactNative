@@ -1,15 +1,22 @@
+// src\App.tsx
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
-
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setNews } from './redux/actions/newsActions';
+import axios from 'axios';
+import { RootState } from './redux';
+import store from './redux';
 import {
   Button,
   Image,
   StyleSheet,
   Text,
   View,
+  FlatList,
 } from 'react-native';
 
 type RootStackParamList = {
@@ -90,6 +97,43 @@ function MyProfileScreen() {
   );
 }
 
+const NewsScreen = () => {
+  const dispatch = useDispatch();
+  const news = useSelector((state: RootState) => state.news.news);
+
+  useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        const response = await axios.get(
+          'https://newsapi.org/v2/top-headlines?country=us&apiKey=828fe193ef9a4d9d951c40d99cdefc07'
+        );
+        dispatch(setNews(response.data.articles));
+      } catch (error) {
+        console.error('Error fetching news:', error);
+      }
+    };
+
+    fetchNews();
+  }, [dispatch]);
+
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Text style={styles.header}>Recent News</Text>
+      <FlatList
+        data={news}
+        keyExtractor={(item) => item.title}
+        renderItem={({ item }) => (
+          <View>
+            <Text>{item.title}</Text>
+            <Text>{item.description}</Text>
+            {/* Add more components to display other news details as needed */}
+          </View>
+        )}
+      />
+    </View>
+  );
+};
+
 const stylesMyProfile = StyleSheet.create({
   title: {
     fontSize: 24,
@@ -109,66 +153,12 @@ const Drawer = createDrawerNavigator();
 function App() {
   return (
     <NavigationContainer>
-      {/* <Stack.Navigator initialRouteName="Department">
-        <Stack.Screen name="Department" component={DepartmentScreen} />
-        <Stack.Screen name="MyProfile" component={MyProfileScreen} />
-      </Stack.Navigator> */}
-
       <Drawer.Navigator initialRouteName="Department">
         <Drawer.Screen name="Department" component={DepartmentScreen} />
         <Drawer.Screen name="MyProfile" component={MyProfileScreen} />
+        <Drawer.Screen name="News" component={NewsScreen} />
       </Drawer.Navigator>
     </NavigationContainer>
   );
 }
 export default App;
-
-
-
-
-// import * as React from 'react';
-// import { Button, View } from 'react-native';
-// import { createDrawerNavigator } from '@react-navigation/drawer';
-// import { NavigationContainer } from '@react-navigation/native';
-
-// // Явно указываем тип для пропса "navigation"
-// type HomeScreenProps = {
-//   navigation: any; // Замените "any" на тип вашей навигации, если у вас есть его определение
-// };
-
-// function HomeScreen({ navigation }: HomeScreenProps) {
-//   return (
-//     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-//       <Button
-//         onPress={() => navigation.navigate('Notifications')}
-//         title="Go to notifications"
-//       />
-//     </View>
-//   );
-// }
-
-// // Явно указываем тип для пропса "navigation"
-// type NotificationsScreenProps = {
-//   navigation: any; // Замените "any" на тип вашей навигации, если у вас есть его определение
-// };
-
-// function NotificationsScreen({ navigation }: NotificationsScreenProps) {
-//   return (
-//     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-//       <Button onPress={() => navigation.goBack()} title="Go back home" />
-//     </View>
-//   );
-// }
-
-// const Drawer = createDrawerNavigator();
-
-// export default function App() {
-//   return (
-//     <NavigationContainer>
-//       <Drawer.Navigator initialRouteName="Home">
-//         <Drawer.Screen name="Home" component={HomeScreen} />
-//         <Drawer.Screen name="Notifications" component={NotificationsScreen} />
-//       </Drawer.Navigator>
-//     </NavigationContainer>
-//   );
-// }
